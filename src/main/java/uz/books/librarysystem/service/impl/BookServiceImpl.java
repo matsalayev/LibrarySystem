@@ -10,6 +10,7 @@ import uz.books.librarysystem.repository.BookRepository;
 import uz.books.librarysystem.repository.GenreRepository;
 import uz.books.librarysystem.service.BookService;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -25,7 +26,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book update(Integer id, BookDto item) {
+    public void update(Integer id, BookDto item) {
         Book entity = repository.findById(id).get();
         entity.setTitle(item.getTitle());
         entity.setAuthorId(authorId(item.getAuthor()));
@@ -33,7 +34,6 @@ public class BookServiceImpl implements BookService {
         entity.setPublicationYear(item.getPublicationYear());
         entity.setAvailabilityStatus(item.getAvailabilityStatus());
         repository.save(entity);
-        return entity;
     }
 
     public Integer authorId(String name){
@@ -63,7 +63,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book create(BookDto book) {
+    public void create(BookDto book) {
         Book item = new Book();
         item.setTitle(book.getTitle());
         item.setAuthorId(authorId(book.getAuthor()));
@@ -71,20 +71,30 @@ public class BookServiceImpl implements BookService {
         item.setPublicationYear(book.getPublicationYear());
         item.setAvailabilityStatus(book.getAvailabilityStatus());
         repository.save(item);
-        return item;
     }
 
     @Override
-    public String delete(Integer id) {
+    public void delete(Integer id) {
         Book entity = repository.findById(id).get();
         String name = entity.getTitle();
         repository.delete(entity);
-        return name + " ba'zadan o'chirildi";
     }
 
     @Override
     public List<BookDto> findAllBook(){
         return repository.findAllBook();
+    }
+
+    @Override
+    public BookDto find(Integer id) {
+        List<BookDto> allBooks = repository.findAllBook();
+        BookDto result = null;
+        for(BookDto book : allBooks) {
+            if (Objects.equals(book.getId(), id)) {
+                result = book;
+            }
+        }
+        return result;
     }
 
 }

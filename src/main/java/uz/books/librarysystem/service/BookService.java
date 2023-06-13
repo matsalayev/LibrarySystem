@@ -5,8 +5,9 @@ import uz.books.librarysystem.model.Book;
 import java.util.List;
 
 public interface BookService {
-    Book update(Integer id, BookDto item);
-    Book create(BookDto book);
-    String delete(Integer id);
+    void update(Integer id, BookDto item);
+    void create(BookDto book);
+    void delete(Integer id);
     List<BookDto> findAllBook();
+    BookDto find(Integer id);
 }

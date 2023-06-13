@@ -2,13 +2,15 @@ package uz.books.librarysystem.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uz.books.librarysystem.dtos.BookDto;
 import uz.books.librarysystem.model.Book;
 import uz.books.librarysystem.service.BookService;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/books")
 public class BookController {
 
@@ -18,24 +20,39 @@ public class BookController {
         this.service = service;
     }
 
+    @GetMapping("/create")
+    public String create(Model model){
+        model.addAttribute("book", new BookDto());
+        return "create";
+    }
     @GetMapping
-    public ResponseEntity<List<BookDto>> list() {
-        return ResponseEntity.ok(service.findAllBook());
+    public String index(Model model) {
+        model.addAttribute("Books", service.findAllBook());
+        return "index";
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Book> update(@PathVariable Integer id, @RequestBody BookDto item) {
-        return ResponseEntity.ok(service.update(id, item));
+    @GetMapping("update/{id}")
+    public String update(@PathVariable Integer id, Model model){
+        model.addAttribute("book", service.find(id));
+        return "update";
     }
 
-    @PostMapping()
-    public ResponseEntity<Book> create(@RequestBody BookDto book){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(book));
+    @PostMapping("/update")
+    public String update(@ModelAttribute("book") BookDto book) {
+        service.update(book.getId(), book);
+        return "redirect:/books";
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> delete(@PathVariable Integer id){
-        return ResponseEntity.ok(service.delete(id));
+    @PostMapping("/save")
+    public String create(@ModelAttribute("book") BookDto book) {
+        service.create(book);
+        return "redirect:/books";
+    }
+
+    @PostMapping("delete/{id}")
+    public String delete(@PathVariable Integer id, @ModelAttribute("book") BookDto book){
+        service.delete(id);
+        return "redirect:/books";
     }
 
 }
