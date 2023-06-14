@@ -1,5 +1,6 @@
 package uz.books.librarysystem.dtos;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class BookDto {
     private Integer id;
     private String title;
@@ -14,12 +16,4 @@ public class BookDto {
     private Boolean availabilityStatus;
     private String author;
     private String genre;
-    public BookDto(Integer id, String title,String author, String genre, Integer publicationYear, Boolean availabilityStatus) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.genre = genre;
-        this.publicationYear = publicationYear;
-        this.availabilityStatus = availabilityStatus;
-    }
 }

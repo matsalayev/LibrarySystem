@@ -49,7 +49,7 @@ public class BookController {
         return "redirect:/books";
     }
 
-    @PostMapping("delete/{id}")
+    @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, @ModelAttribute("book") BookDto book){
         service.delete(id);
         return "redirect:/books";

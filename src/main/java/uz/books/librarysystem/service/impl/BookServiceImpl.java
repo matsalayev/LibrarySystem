@@ -9,6 +9,8 @@ import uz.books.librarysystem.repository.AuthorRepository;
 import uz.books.librarysystem.repository.BookRepository;
 import uz.books.librarysystem.repository.GenreRepository;
 import uz.books.librarysystem.service.BookService;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,65 +31,76 @@ public class BookServiceImpl implements BookService {
     public void update(Integer id, BookDto item) {
         Book entity = repository.findById(id).get();
         entity.setTitle(item.getTitle());
-        entity.setAuthorId(authorId(item.getAuthor()));
-        entity.setGenreId(genreId(item.getGenre()));
+        entity.setAuthor(author(item.getAuthor()));
+        entity.setGenre(genre(item.getGenre()));
         entity.setPublicationYear(item.getPublicationYear());
         entity.setAvailabilityStatus(item.getAvailabilityStatus());
         repository.save(entity);
     }
 
-    public Integer authorId(String name){
-        List<Author> author = authorRepository.findByName(name);
-        if((long) author.size() > 0){
-            return author.get(0).getId();
-        }
-        else{
-            Author newAuthor = new Author();
-            newAuthor.setName(name);
-            authorRepository.save(newAuthor);
-            return newAuthor.getId();
-        }
-    }
-
-    public Integer genreId(String name){
-        List<Genre> genre = genreRepository.findByName(name);
-        if((long) genre.size() > 0){
-            return genre.get(0).getId();
-        }
-        else{
-            Genre newGenre = new Genre();
-            newGenre.setName(name);
-            genreRepository.save(newGenre);
-            return newGenre.getId();
-        }
-    }
 
     @Override
     public void create(BookDto book) {
         Book item = new Book();
         item.setTitle(book.getTitle());
-        item.setAuthorId(authorId(book.getAuthor()));
-        item.setGenreId(genreId(book.getGenre()));
+        item.setAuthor(author(book.getAuthor()));
+        item.setGenre(genre(book.getGenre()));
         item.setPublicationYear(book.getPublicationYear());
         item.setAvailabilityStatus(book.getAvailabilityStatus());
         repository.save(item);
     }
 
+    public Author author(String name){
+        List<Author> AuthorsList = authorRepository.findByName(name);
+        if(!AuthorsList.isEmpty())
+            return AuthorsList.get(0);
+        else{
+            Author author = new Author();
+            author.setName(name);
+            authorRepository.save(author);
+            return author;
+        }
+    }
+    public Genre genre(String name){
+        List<Genre> genreList = genreRepository.findByName(name);
+        if(!genreList.isEmpty())
+            return genreList.get(0);
+        else{
+            Genre genre = new Genre();
+            genre.setName(name);
+            genreRepository.save(genre);
+            return genre;
+        }
+
+    }
+
+
     @Override
     public void delete(Integer id) {
         Book entity = repository.findById(id).get();
-        String name = entity.getTitle();
         repository.delete(entity);
     }
 
     @Override
     public List<BookDto> findAllBook(){
-        return repository.findAllBook();
+        List<Book> booklist =repository.findAll();
+        List<BookDto> bookDtos = new ArrayList<>();
+        for(Book book : booklist){
+            BookDto dto = new BookDto();
+            dto.setId(book.getId());
+            dto.setAuthor(book.getAuthor().getName());
+            dto.setGenre(book.getGenre().getName());
+            dto.setTitle(book.getTitle());
+            dto.setAvailabilityStatus(book.getAvailabilityStatus());
+            dto.setPublicationYear(book.getPublicationYear());
+            bookDtos.add(dto);
+        }
+        return bookDtos;
     }
 
     @Override
     public BookDto find(Integer id) {
-        List<BookDto> allBooks = repository.findAllBook();
+        List<BookDto> allBooks = findAllBook();
         BookDto result = null;
         for(BookDto book : allBooks) {
             if (Objects.equals(book.getId(), id)) {

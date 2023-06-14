@@ -16,7 +16,9 @@ public class Book {
     private String title;
     private Integer publicationYear;
     private Boolean availabilityStatus;
-    private Integer authorId;
-    private Integer genreId;
+    @ManyToOne
+    private Author author;
+    @ManyToOne
+    private Genre genre;
 }
 
