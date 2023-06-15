@@ -19,9 +19,22 @@
         <h2>Books</h2>
         <p></p>
     </div>
-
-<table class="table table-striped" >
-    <thead class="thead-dark">
+        <form th:action="@{/books/search}" method="get">
+            <table>
+            <tr>
+                <td>
+                    <input type="text" name="keyword" th:object="${keyword}"  placeholder="Search..." class="form-control" size="120">
+                </td>
+                <td></td>
+                <td>
+                    <button type="submit" class="btn btn-success" >Search</button>
+                </td>
+            </tr>
+            </table>
+            <p></p>
+        </form>
+<table class="table table-striped">
+    <thead>
     <tr>
         <th>#</th>
         <th>Title</th>

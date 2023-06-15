@@ -27,27 +27,29 @@ public class BookServiceImpl implements BookService {
         this.genreRepository = genreRepository;
     }
 
-    @Override
-    public void update(Integer id, BookDto item) {
-        Book entity = repository.findById(id).get();
-        entity.setTitle(item.getTitle());
-        entity.setAuthor(author(item.getAuthor()));
-        entity.setGenre(genre(item.getGenre()));
-        entity.setPublicationYear(item.getPublicationYear());
-        entity.setAvailabilityStatus(item.getAvailabilityStatus());
-        repository.save(entity);
-    }
 
 
     @Override
-    public void create(BookDto book) {
-        Book item = new Book();
-        item.setTitle(book.getTitle());
-        item.setAuthor(author(book.getAuthor()));
-        item.setGenre(genre(book.getGenre()));
-        item.setPublicationYear(book.getPublicationYear());
-        item.setAvailabilityStatus(book.getAvailabilityStatus());
-        repository.save(item);
+    public void save(BookDto book) {
+        Integer id = book.getId();
+        if(id == null) {
+            Book item = new Book();
+            item.setTitle(book.getTitle());
+            item.setAuthor(author(book.getAuthor()));
+            item.setGenre(genre(book.getGenre()));
+            item.setPublicationYear(book.getPublicationYear());
+            item.setAvailabilityStatus(book.getAvailabilityStatus());
+            repository.save(item);
+        }
+        else{
+            Book entity = repository.findById(id).get();
+            entity.setTitle(book.getTitle());
+            entity.setAuthor(author(book.getAuthor()));
+            entity.setGenre(genre(book.getGenre()));
+            entity.setPublicationYear(book.getPublicationYear());
+            entity.setAvailabilityStatus(book.getAvailabilityStatus());
+            repository.save(entity);
+        }
     }
 
     public Author author(String name){
@@ -83,7 +85,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDto> findAllBook(){
-        List<Book> booklist =repository.findAll();
+        return dtoList(repository.findAll());
+    }
+
+    List<BookDto> dtoList (List<Book> booklist){
         List<BookDto> bookDtos = new ArrayList<>();
         for(Book book : booklist){
             BookDto dto = new BookDto();
@@ -96,6 +101,10 @@ public class BookServiceImpl implements BookService {
             bookDtos.add(dto);
         }
         return bookDtos;
+    }
+    @Override
+    public List<BookDto> search(String keyword) {
+        return dtoList(repository.search(keyword));
     }
 
     @Override
